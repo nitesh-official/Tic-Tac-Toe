@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Multiplayer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Background Shapes -->
+    <div class="bg-shapes">
+        <div class="shape shape-1">X</div>
+        <div class="shape shape-2">O</div>
+        <div class="shape shape-3">X</div>
+        <div class="shape shape-4">O</div>
+    </div>
+
+    <!-- ========================================
+         SCREEN 1: LOBBY (Create/Join Room)
+         ======================================== -->
+    <div class="screen lobby-screen active-screen" id="lobbyScreen">
+        <div class="lobby-wrapper">
+            <header class="lobby-header">
+                <h1 class="game-title">
+                    <span class="title-x">Tic</span><span class="title-dash">-</span>
+                    <span class="title-tac">Tac</span><span class="title-dash">-</span>
+                    <span class="title-o">Toe</span>
+                </h1>
+                <p class="game-subtitle">🌐 Online Multiplayer</p>
+            </header>
+
+            <!-- Player Name -->
+            <div class="input-group">
+                <label class="input-label" for="playerName">Your Name</label>
+                <input 
+                    type="text" 
+                    id="playerName" 
+                    class="input-field" 
+                    placeholder="Enter your name..." 
+                    maxlength="15"
+                    autocomplete="off"
+                >
+            </div>
+
+            <!-- Create Room -->
+            <button class="btn btn-create" id="createRoomBtn">
+                🏠 Create Room
+            </button>
+
+            <div class="divider">
+                <span class="divider-text">OR</span>
+            </div>
+
+            <!-- Join Room -->
+            <div class="input-group">
+                <label class="input-label" for="roomIdInput">Room ID</label>
+                <input 
+                    type="text" 
+                    id="roomIdInput" 
+                    class="input-field" 
+                    placeholder="Enter Room ID..." 
+                    maxlength="6"
+                    autocomplete="off"
+                    style="text-transform: uppercase;"
+                >
+            </div>
+
+            <button class="btn btn-join" id="joinRoomBtn">
+                🤝 Join Room
+            </button>
+
+            <!-- Error/Info Messages -->
+            <div class="lobby-message" id="lobbyMessage"></div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         SCREEN 2: WAITING ROOM
+         ======================================== -->
+    <div class="screen waiting-screen" id="waitingScreen">
+        <div class="waiting-wrapper">
+            <div class="waiting-animation">
+                <div class="waiting-spinner"></div>
+            </div>
+            <h2 class="waiting-title">Waiting for Opponent...</h2>
+            <div class="room-id-display">
+                <p class="room-id-label">Share this Room ID:</p>
+                <div class="room-id-box">
+                    <span class="room-id-value" id="waitingRoomId">------</span>
+                    <button class="btn-copy" id="copyRoomIdBtn" title="Copy Room ID">
+                        📋
+                    </button>
+                </div>
+                <p class="room-id-hint">Send this code to your friend!</p>
+            </div>
+
+            <!-- Share Link -->
+            <div class="share-link-box">
+                <p class="share-label">Or share this link:</p>
+                <div class="link-display">
+                    <input type="text" class="link-input" id="shareLink" readonly>
+                    <button class="btn-copy" id="copyLinkBtn" title="Copy Link">
+                        🔗
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn btn-cancel" id="cancelWaitBtn">
+                ✖ Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================
+         SCREEN 3: GAME SCREEN
+         ======================================== -->
+    <div class="screen game-screen" id="gameScreen">
+        <div class="game-wrapper">
+            <!-- Header with Room ID -->
+            <header class="game-header">
+                <h1 class="game-title-small">
+                    <span class="title-x">Tic</span><span class="title-dash">-</span>
+                    <span class="title-tac">Tac</span><span class="title-dash">-</span>
+                    <span class="title-o">Toe</span>
+                </h1>
+                <div class="room-badge">
+                    Room: <span id="gameRoomId">------</span>
+                </div>
+            </header>
+
+            <!-- Player Info Cards -->
+            <section class="players-info">
+                <div class="player-card player-x-card" id="playerXCard">
+                    <div class="player-marker x-color">X</div>
+                    <span class="player-name" id="playerXName">Player 1</span>
+                    <span class="player-score" id="scoreX">0</span>
+                    <div class="you-badge" id="youBadgeX">YOU</div>
+                    <div class="turn-indicator" id="turnIndicatorX"></div>
+                </div>
+
+                <div class="vs-badge">
+                    <span class="draw-score" id="scoreDraw">0</span>
+                    <span class="vs-text">draws</span>
+                </div>
+
+                <div class="player-card player-o-card" id="playerOCard">
+                    <div class="player-marker o-color">O</div>
+                    <span class="player-name" id="playerOName">Player 2</span>
+                    <span class="player-score" id="scoreO">0</span>
+                    <div class="you-badge" id="youBadgeO">YOU</div>
+                    <div class="turn-indicator" id="turnIndicatorO"></div>
+                </div>
+            </section>
+
+            <!-- Status Area -->
+            <div class="status-container" id="statusContainer">
+                <p class="status-text" id="statusText">Waiting...</p>
+            </div>
+
+            <!-- Game Grid -->
+            <main class="game-board" id="gameBoard">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </main>
+
+            <!-- Game Buttons -->
+            <div class="button-group">
+                <button class="btn btn-reset" id="resetBtn">🔄 Rematch</button>
+                <button class="btn btn-new" id="newSeriesBtn">✨ New Series</button>
+                <button class="btn btn-leave" id="leaveBtn">🚪 Leave</button>
+            </div>
+
+            <!-- Mini Chat -->
+            <div class="chat-section">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-msg system-msg">Game started! Good luck! 🎮</div>
+                </div>
+                <div class="chat-input-area">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Type a message..." 
+                        maxlength="100"
+                    >
+                    <button class="btn-send" id="sendChatBtn">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         CELEBRATION OVERLAY
+         ======================================== -->
+    <div class="celebration-overlay" id="celebrationOverlay">
+        <div class="celebration-content">
+            <div class="celebration-emoji" id="celebrationEmoji">🎉</div>
+            <h2 class="celebration-text" id="celebrationText">You Win!</h2>
+            <p class="celebration-sub" id="celebrationSub"></p>
+            <button class="btn btn-play-again" id="playAgainBtn">Rematch 🎮</button>
+        </div>
+    </div>
+
+    <!-- ========================================
+         NOTIFICATION TOAST
+         ======================================== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Socket.io Client Library (server se auto-serve hota hai) -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
